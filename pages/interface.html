@@ -12,6 +12,7 @@
 		padding: 0px;
 		background: #b251bc;
 		color: #ffffff;
+		overflow: hidden;
 
 	    background: url('http://itsduc.com/projects/gloverunner/FullBackground.jpg') no-repeat center center fixed; 
 		-webkit-background-size: cover;
@@ -425,8 +426,12 @@
 	.login-page {
 		background: url('http://itsduc.com/projects/gloverunner/LoginPage.jpg');
 		position: absolute;
-		height: 100%;
-		width: 100%;
+		height: 990px;
+		width: 1700px;
+		left: 50%;
+		top: 50%;
+		margin-left: -850px;
+		margin-top: -495px;
 		z-index: 1;
 	}
 
@@ -668,6 +673,13 @@
       
 	$(document).ready(function() {
 
+		$('.login-page').click(function() {
+			$(this).fadeOut('fast', function() {
+				$(this).remove();
+				$('body').css('overflow', 'visible');
+			});
+		});
+
 		$('.rotateRight').hide();
 		$('.rotateLeft').hide();
 		$('.waveRight').hide();
@@ -682,6 +694,18 @@
 		function updateClasses() {
 			var gestureAssignment = $('#gestureAssignment').val();
 			var gestures = $('#gestures').val();
+
+			if (gestures == 'THUMB_GESTURE') {
+				$('.thumb').addClass('active');
+				$('.point').addClass('active');
+			}
+
+			if (gestures == 'GUN_GESTURE') {
+				$('.thumb').addClass('active');
+				$('.pointer').addClass('active');
+				$('.pew').addClass('active');
+			}
+
 			if (gestures == 'OPEN_GESTURE'){
 					$('.thumb').addClass('active');
 					$('.pointer').addClass('active');
@@ -791,9 +815,9 @@
 
 		$("#squaredFour").change(function(){
 			if( $(this).is(':checked') ) 
-				iosocket.emit('switchedToFPS', 0);
-			else 
 				iosocket.emit('switchedToFPS', 1);
+			else 
+				iosocket.emit('switchedToFPS', 0);
 		});
 
 	});
@@ -815,11 +839,9 @@
 
 		<h2>CHOOSE A PROFILE</h2> 
 		<select class="choose-profile">
-		  <option value="Peony">Peony</option>
-		  <option value="Sebastian">Sebastian</option>
-		  <option value="Laura">Laura</option>
-		  <option value="Jason">Jason</option>
-		  <option value="Travis">Travis</option>
+		  <option value="BrowingWeb">Browsing the web</option>
+		  <option value="PlayMusic">Play Music</option>
+		  <option value="PlayaGame">Play A Game</option>
 		</select>
 		<!--TODO: ADD BUTTON-->
 

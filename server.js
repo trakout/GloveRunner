@@ -90,6 +90,7 @@ var socketServer;
 var serialPort;
 // var portName = '/dev/tty.usbserial-A6008m1K'; // jason
 var portName = '/dev/tty.usbmodem1421'; // seb & Travis
+// var portName = '/dev/tty.usbmodem1d1121'; // Presentation
 var sendData = "";
 var receivedData = "";
 
@@ -134,11 +135,13 @@ var CURRENT_GESTURE = OPEN_GESTURE;
 
 var KEY_MAP = {
     OPEN_GESTURE: [],
-    OK_GESTURE: [],
+    OK_GESTURE: ['r'],
     MIDDLE_FINGER_GESTURE: [],
     ROCK_ON_GESTURE: [],
     POINT_GESTURE: [],
-    FIST_GESTURE: []
+    FIST_GESTURE: [],
+    GUN_GESTURE: ['lClickRelease'],
+    THUMBS_UP_GESTURE: ['lClickHold'] 
 };
 
 
@@ -171,7 +174,7 @@ function startServer(route,handle,debug)
     }); 
 
     // UNCOMMENT THIS TO USE THE ARDUINO STUFF
-    // serialListener(debug);
+    serialListener(debug);
     initSocketIO(httpServer,debug);
 }
 
@@ -287,7 +290,7 @@ function findGesture()
         // console.log('FIST');
     } else if (CURRENT_GESTURE != GUN_GESTURE  && THUMB_STATE == THUMB_STRAIGHT && INDEX_STATE == INDEX_STRAIGHT && MIDDLE_STATE == MIDDLE_BENT && RING_STATE == RING_BENT && PINKY_STATE == PINKY_BENT) {
         CURRENT_GESTURE = GUN_GESTURE;
-        simulateKeyPress('FIST_GESTURE');
+        simulateKeyPress('GUN_GESTURE');
         // console.log('FIST');
     } else if (CURRENT_GESTURE != THUMBS_UP_GESTURE  && THUMB_STATE == THUMB_STRAIGHT && INDEX_STATE == INDEX_BENT && MIDDLE_STATE == MIDDLE_BENT && RING_STATE == RING_BENT && PINKY_STATE == PINKY_BENT) {
         CURRENT_GESTURE = THUMBS_UP_GESTURE;
@@ -385,7 +388,7 @@ function processPacket(packet)
             state += '-1 ';
         }
 
-        // console.log(state);
+        console.log(state);
         findGesture();
     }
 }

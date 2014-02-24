@@ -131,6 +131,7 @@ var POINT_GESTURE = 4;
 var FIST_GESTURE = 5;
 var GUN_GESTURE = 6;
 var THUMBS_UP_GESTURE = 7;
+var GUN_RELOAD_GESTURE = 8;
 var CURRENT_GESTURE = OPEN_GESTURE;
 
 var KEY_MAP = {
@@ -141,7 +142,8 @@ var KEY_MAP = {
     POINT_GESTURE: [],
     FIST_GESTURE: [],
     GUN_GESTURE: ['lClickRelease'],
-    THUMBS_UP_GESTURE: ['lClickHold'] 
+    THUMBS_UP_GESTURE: ['lClickHold'],
+    GUN_RELOAD_GESTURE: ['r']
 };
 
 
@@ -180,13 +182,13 @@ function startServer(route,handle,debug)
 
 function NativeControl(shellArr) {
 
-    console.log(shellArr.length);
+    // console.log(shellArr.length);
     switch (shellArr.length) {
         case 0:
             return;
             break;
         case 1:
-            console.log(shellArr[0]);
+            console.log(shellArr);
             // Check for mouse clicks
             if (shellArr[0] == 'lClick') {
                 shell.exec('cliclick c:"+0,+0"', {async:true});
@@ -202,6 +204,7 @@ function NativeControl(shellArr) {
             }
             break;
         case 2: // 2-key shortCut
+            console.log(shellArr);  
             shell.exec('cliclick kd:"' + shellArr[0] + '" kp:"' + shellArr[1] + '" ku:"' + shellArr[0] + '"', {async:true}); 
             break;
         default:
@@ -230,12 +233,16 @@ function initSocketIO(httpServer,debug)
         socket.on('mapGesture', function(data) {
             // console.log(exec('cliclick w:"3000" kp:"tab"'));
             KEY_MAP[data.gesture] = data.keys;
-            console.log(KEY_MAP[data.gesture]);
+            // console.log(KEY_MAP[data.gesture]);
         });
 
         socket.on('switchedToFPS', function(data) {
             // console.log(exec('cliclick w:"3000" kp:"tab"'));
-            console.log(data);
+            // console.log(data);
+            if (data)
+                console.log("fps mode");
+            else 
+                console.log("normal mode");
             isFPSDemo = data;
         });
 
@@ -255,7 +262,6 @@ function initSocketIO(httpServer,debug)
 function simulateKeyPress(gesture)
 {
     socketServer.emit('updateGesture', gesture);
-    console.log(KEY_MAP[gesture]);
 
     NativeControl(KEY_MAP[gesture]);
 }
@@ -296,7 +302,11 @@ function findGesture()
         CURRENT_GESTURE = THUMBS_UP_GESTURE;
         simulateKeyPress('THUMBS_UP_GESTURE');
         // console.log('FIST');
+    } else if (CURRENT_GESTURE != GUN_RELOAD_GESTURE && THUMB_STATE == THUMB_STRAIGHT && INDEX_STATE == INDEX_STRAIGHT && MIDDLE_STATE == MIDDLE_BENT && RING_STATE == RING_BENT && PINKY_STATE == PINKY_BENT && PALM_Y_STATE == PALM_Y_UP) {
+        CURRENT_GESTURE = GUN_RELOAD_GESTURE;
+        simulateKeyPress('GUN_RELOAD_GESTURE');
     }
+
 }
 
 function processPacket(packet)
